@@ -18,24 +18,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [error, setError] = useState<string | null>(supabaseInitializationError);
 
   useEffect(() => {
-    // If there was an initialization error or the client is null, stop and don't set up listeners.
+    // If there was an initialization error or the client is null, stop.
     if (error || !supabase) {
       setLoading(false);
       return;
     }
 
-    // Set initial session state
-    supabase.auth.getSession().then(({ data: { session } }) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
-    });
-
-    // Listen for auth state changes
+    // onAuthStateChange is called once upon subscription with the current session.
+    // This is the recommended way to get the session, as it avoids race conditions.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false); // Also set loading to false on state change
+      setLoading(false);
     });
 
     return () => {
