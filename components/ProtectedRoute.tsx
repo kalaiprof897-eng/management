@@ -33,7 +33,7 @@ const ProtectedRoute: React.FC = () => {
   const { user } = useAuth();
 
   if (!user) {
-    return <Navigate to="/signup" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (

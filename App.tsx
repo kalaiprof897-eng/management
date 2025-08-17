@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import CncRunningTime from './pages/CncRunningTime';
 import DailyStatus from './pages/DailyStatus';
@@ -24,8 +24,7 @@ const App: React.FC = () => {
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/" element={<Dashboard />} />
             <Route path="/cnc-running-time" element={<CncRunningTime />} />
             <Route path="/daily-status" element={<DailyStatus />} />
             <Route path="/production-data" element={<ProductionData />} />

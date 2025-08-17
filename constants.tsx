@@ -5,7 +5,7 @@ const iconClass = "h-6 w-6";
 
 export const NAV_LINKS = [
   {
-    path: '/dashboard',
+    path: '/',
     label: 'Dashboard',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor">
