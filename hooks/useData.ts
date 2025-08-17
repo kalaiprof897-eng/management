@@ -70,7 +70,7 @@ export const useData = () => {
             id: p.id,
             timestamp: new Date(p.timestamp),
             partId: p.part_id,
-            machineId: p.machine_id,
+            machineName: p.machine_name,
             quantityProduced: p.quantity_produced,
             scrapCount: p.scrap_count,
             cycleTime: p.cycle_time,
