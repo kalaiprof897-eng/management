@@ -1,0 +1,5 @@
+{
+  "name": "ManuSys AI Dashboard",
+  "description": "An advanced management system for a manufacturing company, featuring dashboards for CNC running time, daily status with AI-powered summaries, production data, tool inventory, and machine status.",
+  "requestFramePermissions": []
+}
