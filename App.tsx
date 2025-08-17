@@ -19,12 +19,12 @@ const App: React.FC = () => {
       <HashRouter>
         <Routes>
           {/* Public routes */}
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
 
           {/* Protected routes */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/cnc-running-time" element={<CncRunningTime />} />
             <Route path="/daily-status" element={<DailyStatus />} />
             <Route path="/production-data" element={<ProductionData />} />
