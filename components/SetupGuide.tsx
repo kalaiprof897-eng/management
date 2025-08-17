@@ -218,7 +218,7 @@ const SetupGuide: React.FC = () => {
                   allSetupOk ? (
                       <div className="flex items-center space-x-2 text-green-400">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                          <span>Success! All tables found. <Link to="/" className="font-bold underline">Go to Dashboard</Link></span>
+                          <span>Success! All tables found. <Link to="/dashboard" className="font-bold underline">Go to Dashboard</Link></span>
                       </div>
                   ) : (
                       <div className="flex items-center space-x-2 text-yellow-400">
