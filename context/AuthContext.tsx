@@ -12,21 +12,29 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  // First, handle a fatal initialization error. If Supabase isn't configured,
+  // the app cannot run. We display a helpful error message instead of a blank screen.
+  if (supabaseInitializationError) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-gray-900 text-white p-4">
+        <div className="bg-gray-800 p-8 rounded-lg shadow-lg text-center max-w-lg">
+          <h1 className="text-2xl font-bold text-red-500 mb-4">Application Initialization Error</h1>
+          <p className="text-gray-300">Could not connect to the required backend service.</p>
+          <p className="text-gray-400 mt-2 text-sm bg-gray-900 p-2 rounded">
+            <strong>Details:</strong> {supabaseInitializationError}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(supabaseInitializationError);
 
   useEffect(() => {
-    // If there was an initialization error or the client is null, stop.
-    if (error || !supabase) {
-      setLoading(false);
-      return;
-    }
-
-    // onAuthStateChange is called once upon subscription with the current session.
-    // This is the recommended way to get the session, as it avoids race conditions.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // We can assert supabase is not null here due to the check above.
+    const { data: { subscription } } = supabase!.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -35,7 +43,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return () => {
       subscription.unsubscribe();
     };
-  }, [error]);
+  }, []); // Empty dependency array is correct for a one-time subscription setup.
 
   const signOut = async () => {
     // Ensure supabase client exists before calling signOut
@@ -50,25 +58,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     signOut
   };
 
+  // While waiting for the initial session to be determined, show a loading spinner.
   if (loading) {
     return <div className="h-screen w-screen flex items-center justify-center bg-gray-900"><LoadingSpinner /></div>;
   }
-
-  // If there was an error during initialization, show a helpful message
-  if (error) {
-    return (
-      <div className="h-screen w-screen flex items-center justify-center bg-gray-900 text-white p-4">
-        <div className="bg-gray-800 p-8 rounded-lg shadow-lg text-center max-w-lg">
-          <h1 className="text-2xl font-bold text-red-500 mb-4">Application Initialization Error</h1>
-          <p className="text-gray-300">Could not connect to the required backend service.</p>
-          <p className="text-gray-400 mt-2 text-sm bg-gray-900 p-2 rounded">
-            <strong>Details:</strong> {error}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
 
   return (
     <AuthContext.Provider value={value}>
