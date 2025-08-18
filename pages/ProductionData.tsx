@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import DataTable from '../components/DataTable';
 import { useAppData } from '../context/DataContext';
@@ -13,13 +14,13 @@ const ProductionData: React.FC = () => {
     }
 
     const columns = [
-        { key: 'timestamp' as keyof ProductionRecord, header: 'Timestamp', render: (item: ProductionRecord) => item.timestamp.toLocaleString() },
-        { key: 'partId' as keyof ProductionRecord, header: 'Part ID' },
-        { key: 'machineName' as keyof ProductionRecord, header: 'Machine Name' },
-        { key: 'quantityProduced' as keyof ProductionRecord, header: 'Quantity Produced' },
-        { key: 'scrapCount' as keyof ProductionRecord, header: 'Scrap Count' },
+        { key: 'timestamp', header: 'Timestamp', render: (item: ProductionRecord) => item.timestamp.toLocaleString() },
+        { key: 'partId', header: 'Part ID' },
+        { key: 'machineName', header: 'Machine Name' },
+        { key: 'quantityProduced', header: 'Quantity Produced' },
+        { key: 'scrapCount', header: 'Scrap Count' },
         { 
-            key: 'scrapRate' as keyof ProductionRecord,
+            key: 'scrapRate',
             header: 'Scrap Rate (%)',
             render: (item: ProductionRecord) => {
                 const rate = item.quantityProduced > 0 ? ((item.scrapCount / (item.quantityProduced + item.scrapCount)) * 100).toFixed(2) : '0.00';
@@ -28,7 +29,7 @@ const ProductionData: React.FC = () => {
                 return <span className={color}>{rate}%</span>;
             }
         },
-        { key: 'cycleTime' as keyof ProductionRecord, header: 'Cycle Time (s)' },
+        { key: 'cycleTime', header: 'Cycle Time (s)' },
     ];
 
     return (

@@ -2,7 +2,7 @@
 import React from 'react';
 
 interface DataTableProps<T> {
-  columns: { key: keyof T; header: string; render?: (item: T) => React.ReactNode }[];
+  columns: { key: string; header: string; render?: (item: T) => React.ReactNode }[];
   data: T[];
 }
 
@@ -16,7 +16,7 @@ const DataTable = <T extends { id: string | number }>(
           <thead className="bg-gray-700">
             <tr>
               {columns.map((col) => (
-                <th key={String(col.key)} className="p-4 font-semibold text-sm text-gray-300 uppercase tracking-wider">
+                <th key={col.key} className="p-4 font-semibold text-sm text-gray-300 uppercase tracking-wider">
                   {col.header}
                 </th>
               ))}
@@ -26,8 +26,8 @@ const DataTable = <T extends { id: string | number }>(
             {data.map((item) => (
               <tr key={item.id} className="hover:bg-gray-700/50 transition-colors">
                 {columns.map((col) => (
-                  <td key={String(col.key)} className="p-4 text-gray-200 whitespace-nowrap">
-                    {col.render ? col.render(item) : String(item[col.key] ?? '')}
+                  <td key={col.key} className="p-4 text-gray-200 whitespace-nowrap">
+                    {col.render ? col.render(item) : String((item as any)[col.key] ?? '')}
                   </td>
                 ))}
               </tr>

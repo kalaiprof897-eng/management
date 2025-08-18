@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 import { useAppData } from '../context/DataContext';
-import { generateDailySummary } from '../services/geminiService';
 import { ProductionRecord } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
+import AiSummaryDisplay from '../components/AiSummaryDisplay';
 
 const DailyStatus: React.FC = () => {
   const { productionRecords, loading } = useAppData();
@@ -18,11 +19,49 @@ const DailyStatus: React.FC = () => {
     setIsGenerating(true);
     setGenerationError(null);
     setSummary('');
+
     try {
-      const result = await generateDailySummary(productionRecords);
-      setSummary(result);
+        if (!process.env.API_KEY) {
+            throw new Error("API_KEY is not configured. Please contact support.");
+        }
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+        
+        const simplifiedData = productionRecords.slice(0, 50).map(r => ({
+            partId: r.partId,
+            machine: r.machineName,
+            produced: r.quantityProduced,
+            scrap: r.scrapCount,
+            cycleTime: r.cycleTime,
+        }));
+        
+        const prompt = `
+            Analyze the following recent production data for a manufacturing facility.
+            Provide a concise daily status summary for a plant manager.
+            
+            Key areas to highlight:
+            - Overall production volume and performance.
+            - Identify any machines with unusually high scrap rates (e.g., above 2%).
+            - Pinpoint potential production bottlenecks (e.g., a machine with a long cycle time but low output).
+            - Mention any high-performing machines or positive trends.
+            - Conclude with a brief, actionable insight or recommendation.
+
+            Format the response with clear paragraphs. Use bullet points starting with '*' for specific details like problematic or high-performing machines.
+            Example bullet point: * CNC Mill 3: High scrap rate of 5.3% on PART-789.
+
+            Data (JSON format):
+            ${JSON.stringify(simplifiedData, null, 2)}
+        `;
+
+        const response: GenerateContentResponse = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+        
+        setSummary(response.text);
+
     } catch (e: unknown) {
-      const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred';
+      const errorMessage = e instanceof Error ? e.message : 'An unknown error occurred during AI summary generation.';
+      console.error("Error generating summary:", e);
       setGenerationError(errorMessage);
     } finally {
       setIsGenerating(false);
@@ -39,13 +78,14 @@ const DailyStatus: React.FC = () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* AI Summary Section */}
-      <div className="lg:col-span-2 bg-gray-800 p-6 rounded-lg shadow-lg">
+      <div className="lg:col-span-2 bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-white">AI-Powered Daily Summary</h2>
           <button
             onClick={handleGenerateSummary}
-            disabled={isGenerating}
+            disabled={isGenerating || productionRecords.length === 0}
             className="bg-teal-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-600 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors flex items-center"
+            title={productionRecords.length === 0 ? "No production data to analyze" : "Generate AI Summary"}
           >
             {isGenerating ? (
               <>
@@ -60,9 +100,27 @@ const DailyStatus: React.FC = () => {
             )}
           </button>
         </div>
-        <div className="bg-gray-900 p-4 rounded-md min-h-[300px] text-gray-300 whitespace-pre-wrap leading-relaxed">
-          {generationError && <p className="text-red-400">{generationError}</p>}
-          {summary || (!isGenerating && !generationError && "Click 'Generate Summary' to get an AI-powered analysis of today's production.")}
+        <div className="bg-gray-900 p-6 rounded-md min-h-[300px] flex-grow flex flex-col text-gray-300 leading-relaxed">
+           {isGenerating ? (
+              <div className="flex-grow flex justify-center items-center">
+                  <div className="text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-teal-500 mx-auto"></div>
+                      <p className="mt-4 text-gray-400">AI is analyzing the data...</p>
+                  </div>
+              </div>
+          ) : generationError ? (
+              <div className="flex-grow flex justify-center items-center">
+                  <p className="text-red-400 text-center">{generationError}</p>
+              </div>
+          ) : summary ? (
+              <AiSummaryDisplay summary={summary} />
+          ) : (
+              <div className="flex-grow flex justify-center items-center">
+                  <p className="text-center text-gray-500">
+                  Click 'Generate Summary' to get an AI-powered analysis of today's production data.
+                  </p>
+              </div>
+          )}
         </div>
       </div>
 

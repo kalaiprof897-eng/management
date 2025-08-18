@@ -35,11 +35,11 @@ const CncRunningTime: React.FC = () => {
     }));
 
     const machineUtilizationColumns = [
-        { key: 'name' as keyof Machine, header: 'Machine' },
-        { key: 'runningTime' as keyof Machine, header: 'Running Time (h)' },
-        { key: 'idleTime' as keyof Machine, header: 'Idle Time (h)' },
+        { key: 'name', header: 'Machine' },
+        { key: 'runningTime', header: 'Running Time (h)' },
+        { key: 'idleTime', header: 'Idle Time (h)' },
         { 
-            key: 'utilization' as keyof Machine, 
+            key: 'utilization', 
             header: 'Utilization (%)',
             render: (item: Machine) => {
                 const total = item.runningTime + item.idleTime;
@@ -47,16 +47,16 @@ const CncRunningTime: React.FC = () => {
                 return `${utilization}%`;
             }
         },
-        { key: 'status' as keyof Machine, header: 'Current Status' },
+        { key: 'status', header: 'Current Status' },
     ];
     
     const recentLogsColumns = [
-        { key: 'inTime' as keyof CncTimeLog, header: 'In Time', render: (item: CncTimeLog) => item.inTime.toLocaleString() },
-        { key: 'outTime' as keyof CncTimeLog, header: 'Out Time', render: (item: CncTimeLog) => item.outTime.toLocaleString() },
-        { key: 'machineName' as keyof CncTimeLog, header: 'Machine' },
-        { key: 'workOrderNumber' as keyof CncTimeLog, header: 'Work Order #' },
-        { key: 'workPieceName' as keyof CncTimeLog, header: 'Work Piece' },
-        { key: 'quantity' as keyof CncTimeLog, header: 'Qty' },
+        { key: 'inTime', header: 'In Time', render: (item: CncTimeLog) => item.inTime.toLocaleString() },
+        { key: 'outTime', header: 'Out Time', render: (item: CncTimeLog) => item.outTime.toLocaleString() },
+        { key: 'machineName', header: 'Machine' },
+        { key: 'workOrderNumber', header: 'Work Order #' },
+        { key: 'workPieceName', header: 'Work Piece' },
+        { key: 'quantity', header: 'Qty' },
     ]
 
     return (

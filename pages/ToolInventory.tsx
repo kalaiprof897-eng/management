@@ -22,10 +22,10 @@ const ToolInventory: React.FC = () => {
     }
 
     const columns = [
-        { key: 'id' as keyof Tool, header: 'Tool ID' },
-        { key: 'type' as keyof Tool, header: 'Type' },
+        { key: 'id', header: 'Tool ID' },
+        { key: 'type', header: 'Type' },
         { 
-            key: 'remainingLife' as keyof Tool, 
+            key: 'remainingLife', 
             header: 'Remaining Life',
             render: (item: Tool) => {
                 const life = item.remainingLife;
@@ -40,9 +40,9 @@ const ToolInventory: React.FC = () => {
                 )
             }
         },
-        { key: 'location' as keyof Tool, header: 'Location' },
+        { key: 'location', header: 'Location' },
         { 
-            key: 'status' as keyof Tool, 
+            key: 'status', 
             header: 'Status',
             render: (item: Tool) => (
                 <span className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(item.status)}`}>
